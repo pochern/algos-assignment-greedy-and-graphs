@@ -1,7 +1,7 @@
 /**
  * Public Transit
- * Author: Your Name and Carolyn Yao
- * Does this compile? Y/N
+ * Author: Polina Chernomaz and Carolyn Yao
+ * Does this compile? Y
  */
 
 /**
@@ -34,7 +34,67 @@ public class FastestRoutePublicTransit {
   ) {
     // Your code along with comments here. Feel free to borrow code from any
     // of the existing method. You can also make new helper methods.
-    return 0;
+    int numVertices = lengths[0].length;	//start with the first row of lengths 2d array
+
+	  // Times = array where shortest times will be stored
+	  int[] times = new int[numVertices];
+
+	  // processed[i] = true if vertex i's shortest time is already finalized
+	  Boolean[] processed = new Boolean[numVertices];
+
+	  // Initialize all distances as INFINITE and processed[] as false
+	  for (int v = 0; v < numVertices; v++) {
+	    times[v] = Integer.MAX_VALUE;
+	    processed[v] = false;
+	  }
+
+	  // Distance of source vertex from itself is always 0
+	  times[S] = 0;
+
+	  // Find shortest path to all the vertices
+	  for (int count = 0; count < numVertices-1; count++) {
+	    // Pick the minimum distance vertex from the set of vertices not yet processed.
+	    // u is always equal to source in first iteration.
+	    // Mark u as processed.
+	    int u = findNextToProcess(times, processed);
+	    processed[u] = true;
+	    // startTime should be updated when station u is processed
+	    startTime += times[u];
+
+	    // Update time value of all the adjacent vertices of the picked vertex.
+	    for (int v = 0; v < numVertices; v++) {
+	      // Update time[v] only if is not processed yet, there is an edge from u to v,
+	      // and (waitTime + shortest time from source to u + the time it takes a train from u to v)
+	      // is smaller than current value of time[v]
+	      if (!processed[v] && lengths[u][v]!=0 && times[u] != Integer.MAX_VALUE && waitTime(first[u][v], freq[u][v], startTime) + times[u] + lengths[u][v] < times[v]) {
+	    	times[v] = waitTime(first[u][v], freq[u][v], startTime) + times[u] + lengths[u][v];		//update v
+	      }
+	    }
+	  }
+	  return times[T];
+  }
+
+  /**
+    * Finds waiting time for the next train.
+    * @param first The time of the first train that stops at current station
+    * @param freq How frequently the train comes to current station
+    * @param startTime the start time in minutes from 5:30am
+    * @return waiting time for the next train
+    */
+  public int waitTime(int first, int freq, int startTime) {
+	int waiting = 0;
+	// From i to 0, until returns temp,
+	for(int i=0; i<Integer.MAX_VALUE; i++) {
+    // If freq is 0, there will be no wait time
+    if(freq == 0) return waiting;
+		// Time of first train + (number of trains * freq) has to be
+		// at least the time of startTime to be able to leave the station
+		if(first + (i * freq) >= startTime) {
+			waiting = first + (i * freq) - startTime;
+			return waiting;		//return waiting time
+		}
+	}
+	return waiting;
   }
 
   /**
@@ -121,9 +181,36 @@ public class FastestRoutePublicTransit {
       {8, 11, 0, 0, 0, 0, 1, 0, 7},
       {0, 0, 2, 0, 0, 0, 6, 7, 0}
     };
+    /* first(e) */
+    int firstGraph[][] = new int[][]{
+      {0, 0, 6, 0, 0, 15, 0, 11, 0},
+      {15, 0, 18, 12, 0, 0, 9, 0, 0},
+      {5, 15, 0, 22, 10, 23, 0, 12, 8},
+      {0, 0, 17, 0, 19, 14, 0, 0, 7},
+      {0, 6, 0, 9, 0, 17, 0, 0, 0},
+      {7, 0, 14, 16, 17, 0, 12, 0, 19},
+      {0, 0, 0, 0, 0, 15, 0, 11, 0},
+      {18, 13, 0, 8, 0, 0, 11, 0, 7},
+      {0, 0, 11, 0, 0, 13, 14, 17, 0}
+    };
+    /* freq(e) */
+    int freqGraph[][] = new int[][]{
+      {0, 0, 3, 0, 0, 10, 0, 8, 0},
+      {11, 0, 19, 13, 0, 0, 7, 0, 0},
+      {4, 16, 0, 22, 20, 23, 0, 14, 10},
+      {0, 0, 15, 0, 11, 14, 0, 0, 4},
+      {0, 5, 0, 19, 0, 17, 0, 0, 0},
+      {0, 0, 15, 14, 13, 0, 8, 0, 13},
+      {0, 0, 0, 0, 0, 14, 0, 14, 0},
+      {20, 13, 0, 7, 0, 0, 10, 0, 9},
+      {0, 0, 11, 0, 0, 12, 17, 18, 0}
+    };
     FastestRoutePublicTransit t = new FastestRoutePublicTransit();
     t.shortestTime(lengthTimeGraph, 0);
 
     // You can create a test case for your implemented method for extra credit below
+    int start = 3, end = 6;
+    int time = t.myShortestTravelTime(3, 6, 26, lengthTimeGraph,  firstGraph, freqGraph);
+    System.out.println("Vertex Distances (time) from " + start + " to " + end + ": " + time + " minutes");
   }
 }
