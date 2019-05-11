@@ -85,8 +85,8 @@ public class FastestRoutePublicTransit {
 	int waiting = 0;
 	// From i to 0, until returns temp,
 	for(int i=0; i<Integer.MAX_VALUE; i++) {
-    // If freq is 0, there will be no wait time
-    if(freq == 0) return waiting;
+		// If freq is 0, there will be no wait time
+		if(freq == 0) return waiting;
 		// Time of first train + (number of trains * freq) has to be
 		// at least the time of startTime to be able to leave the station
 		if(first + (i * freq) >= startTime) {
