@@ -39,9 +39,39 @@ public class PhysicsExperiment {
 
     // Your code goes here
 
+    //start at 1 and use currentCol to track of step you are on/or steps taken
+    int currentCol = 1;
+
+    //while currentCol (step you are on) is not equal to the numSteps, meaning not at the end
+    while(currentCol <= numSteps) {
+    	int maxConSteps = 0;	//maxConSteps = maximum consecutive steps
+    	int studentChosen = 0;	 //studentChosen (student chosen to do steps)
+
+    	//for each row (student) until equal to numStudents
+    	for(int row = 1; row <= numStudents; row++) {
+  			int numConSteps = 0;	//numConSteps = number of consecutive steps in current row
+  			//starting from col=current step, go through each column
+  			for(int col=currentCol; col <= numSteps && signUpTable[row][col] == 1; col++) {
+  				//increment numConSteps if the element in signUpTable = 1
+  				numConSteps++;
+  			}
+  			if(numConSteps > maxConSteps) {
+  				maxConSteps = numConSteps;	//assign numConSteps to maxConSteps so that maxConSteps could hold larger value
+  				studentChosen = row;	//set studentChosen to row so that you can use the row with the maxConSteps when filling scheduleTable
+  			}
+    	}
+
+    	//for each step in maxConSteps
+    	for(int i = 0; i < maxConSteps; i++) {
+    		scheduleTable[studentChosen][currentCol] = 1;	 //fill scheduleTable with row studentChosen and column
+    		currentCol++;	//move on to next step
+    	}
+
+
+    }
+
     return scheduleTable;
   }
-
   /**
    * Makes the convenient lookup table based on the steps each student says they can do
    * @param numSteps the number of steps in the experiment
