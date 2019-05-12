@@ -32,46 +32,46 @@ public class FastestRoutePublicTransit {
     int[][] first,
     int[][] freq
   ) {
-    // Your code along with comments here. Feel free to borrow code from any
-    // of the existing method. You can also make new helper methods.
-    int numVertices = lengths[0].length;	//start with the first row of lengths 2d array
+        // Your code along with comments here. Feel free to borrow code from any
+        // of the existing method. You can also make new helper methods.
+        int numVertices = lengths[0].length;	//start with the first row of lengths 2d array
 
-	  // Times = array where shortest times will be stored
-	  int[] times = new int[numVertices];
+        // Times = array where shortest times will be stored
+        int[] times = new int[numVertices];
 
-	  // processed[i] = true if vertex i's shortest time is already finalized
-	  Boolean[] processed = new Boolean[numVertices];
+        // processed[i] = true if vertex i's shortest time is already finalized
+        Boolean[] processed = new Boolean[numVertices];
+	  
+	// Initialize all distances as INFINITE and processed[] as false
+	for (int v = 0; v < numVertices; v++) {
+	  times[v] = Integer.MAX_VALUE;
+	  processed[v] = false;
+	}
 
-	  // Initialize all distances as INFINITE and processed[] as false
+	// Distance of source vertex from itself is always 0
+	times[S] = 0;
+
+	// Find shortest path to all the vertices
+	for (int count = 0; count < numVertices-1; count++) {
+	  // Pick the minimum distance vertex from the set of vertices not yet processed.
+	  // u is always equal to source in first iteration.
+	  // Mark u as processed.
+	  int u = findNextToProcess(times, processed);
+	  processed[u] = true;
+	  // startTime should be updated when station u is processed
+	  startTime += times[u];
+
+	  // Update time value of all the adjacent vertices of the picked vertex.
 	  for (int v = 0; v < numVertices; v++) {
-	    times[v] = Integer.MAX_VALUE;
-	    processed[v] = false;
-	  }
-
-	  // Distance of source vertex from itself is always 0
-	  times[S] = 0;
-
-	  // Find shortest path to all the vertices
-	  for (int count = 0; count < numVertices-1; count++) {
-	    // Pick the minimum distance vertex from the set of vertices not yet processed.
-	    // u is always equal to source in first iteration.
-	    // Mark u as processed.
-	    int u = findNextToProcess(times, processed);
-	    processed[u] = true;
-	    // startTime should be updated when station u is processed
-	    startTime += times[u];
-
-	    // Update time value of all the adjacent vertices of the picked vertex.
-	    for (int v = 0; v < numVertices; v++) {
-	      // Update time[v] only if is not processed yet, there is an edge from u to v,
-	      // and (waitTime + shortest time from source to u + the time it takes a train from u to v)
-	      // is smaller than current value of time[v]
-	      if (!processed[v] && lengths[u][v]!=0 && times[u] != Integer.MAX_VALUE && waitTime(first[u][v], freq[u][v], startTime) + times[u] + lengths[u][v] < times[v]) {
-	    	times[v] = waitTime(first[u][v], freq[u][v], startTime) + times[u] + lengths[u][v];		//update v
-	      }
+	    // Update time[v] only if is not processed yet, there is an edge from u to v,
+	    // and (waitTime + shortest time from source to u + the time it takes a train from u to v)
+	    // is smaller than current value of time[v]
+	    if (!processed[v] && lengths[u][v]!=0 && times[u] != Integer.MAX_VALUE && waitTime(first[u][v], freq[u][v], startTime) + times[u] + lengths[u][v] < times[v]) {
+		times[v] = waitTime(first[u][v], freq[u][v], startTime) + times[u] + lengths[u][v];		//update v
 	    }
 	  }
-	  return times[T];
+	}
+	return times[T];
   }
 
   /**
