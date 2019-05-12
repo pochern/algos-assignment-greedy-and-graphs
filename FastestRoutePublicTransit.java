@@ -34,7 +34,7 @@ public class FastestRoutePublicTransit {
   ) {
         // Your code along with comments here. Feel free to borrow code from any
         // of the existing method. You can also make new helper methods.
-        int numVertices = lengths[0].length;	//start with the first row of lengths 2d array
+        int numVertices = lengths[0].length;	//get numVertices from first row of lengths 2d array
 
         // Times = array where shortest times will be stored
         int[] times = new int[numVertices];
